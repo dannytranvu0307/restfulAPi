@@ -51,6 +51,6 @@ router.delete('/deleteUser', verifyToken, UserController.delete);
 
 
 router.patch('/comment' ,verifyToken,  UserController.comment)
-router.patch('/delete-comment' ,verifyToken,  UserController.deletecmt)
+router.patch('/delete-comment' ,verifyToken ,  UserController.deletecmt)
 
 module.exports = router;

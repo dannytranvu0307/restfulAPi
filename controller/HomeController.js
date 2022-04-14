@@ -18,7 +18,7 @@ class HomeController{
       const id = req.user._id;
        user.findByIdAndUpdate(id,{ "$push": {"favorite": req.body.videoid }})
         .then(()=>{
-          res.send("push-finished")
+          res.send("push-finishe")
         })
         .catch(next)
     
