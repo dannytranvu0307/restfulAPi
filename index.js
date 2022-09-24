@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 3001;
 const authRouter = require('./router/auth');
 const homeRouter = require('./router/home');
 const adminRouter = require('./router/admin');
 const db = require('./config/db');
-const path = require('path')
+const path = require('path');
+const cors = require('cors')
+app.use(cors())
 db.connect();
 
 app.use(express.static(path.join(__dirname,'/public/image')));

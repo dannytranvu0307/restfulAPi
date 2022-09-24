@@ -3,7 +3,7 @@ const Course = require('../../model/Course');
 module.exports = async  function (req, res, next){
    const id =  req.body.videoid ;
    if(!id){
-      return res.status(404).send('access deninde')
+      return res.status(404).json({'error':'access deninde'})
    }
    
    try {

@@ -15,11 +15,11 @@ module.exports = async  function(req, res, next ){
           
         )
         .catch((err)=>
-          res.status(404).send('errorrr')
+          res.status(404).json({'error':'error'})
         )
         
      } catch (error) {
-        res.send('user is not allowed')
+        res.json({'erro':'user is not allowed'})
      }
      let vadidate = true;
      for(let value of arrayfavoritelist){
@@ -32,7 +32,7 @@ module.exports = async  function(req, res, next ){
    else if(vadidate){ 
       return next();
    } else{
-      return res.send('videoid is already exist')
+      return res.json({'erro':'videoid is already exist'})
    }
   
   

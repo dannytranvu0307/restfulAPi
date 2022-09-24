@@ -15,15 +15,6 @@ router.put('/editUser', verifyToken , UserController.edit);
 
 
 
-
-
-
-
-
-
-
-
-
 // middle ware to up load avatar ------------------------------------pic
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,14 +34,17 @@ const storage = multer.diskStorage({
     }
     cb(null, true);
 };
+
+
+
 const upload = multer({ storage: storage, fileFilter: imageFilter });
 ////////////////////////////////////////////////////////////////////////////////////////
 // verify by token id 
-router.post('/upload-avatar-pic', verifyToken , upload.single('avatar-pic'), UserController.handleuploadfile);
+router.post('/upload-avatar-pic', verifyToken , upload.single('avatar'), UserController.handleuploadfile);
 router.delete('/deleteUser', verifyToken, UserController.delete);
 
 
 router.patch('/comment' ,verifyToken,  UserController.comment)
 router.patch('/delete-comment' ,verifyToken ,  UserController.deletecmt)
-
+router.get('/getUserbyToken', verifyToken , UserController.getUserbyToken)
 module.exports = router;

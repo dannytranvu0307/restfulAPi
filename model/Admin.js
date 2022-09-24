@@ -22,6 +22,12 @@ const adminSchema = new mongoose.Schema({
         type:Date,
         default: Date.now
 
-    }
+    },
+    position: {
+        type:String,
+        required:true,
+        max:255,
+        min:6
+    },
 });
 module.exports = mongoose.model('admin', adminSchema)

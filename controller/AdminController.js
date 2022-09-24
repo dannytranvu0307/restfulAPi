@@ -1,4 +1,4 @@
-const {registerValidation , loginValidation , coursevalidation} = require('../validationUser');
+const {registerValidation , loginValidation , coursevalidation } = require('../validationUser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Admin = require('../model/Admin');
@@ -46,7 +46,9 @@ class AdminController {
      const admin = new Admin({
          name :req.body.name,
          email:req.body.email,
-         password:hash
+         password:hash,
+         position:"admin"
+        
         
      });
      try{
@@ -80,7 +82,9 @@ class AdminController {
          })
          .catch(next)
      }
-     async addcourse(req, res, next){
+
+
+     async addcourse(req, res){
         const {error} = coursevalidation(req.body);
         if(error){
             return res.status(400).send(error.details[0].message);
@@ -98,6 +102,8 @@ class AdminController {
             res.status(400).send(err);
         }
      }
+
+     
       async deletecourse (req, res, next){
           const id = req.body.id ;
           Course.findByIdAndDelete(id,{})

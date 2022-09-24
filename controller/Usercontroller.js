@@ -18,7 +18,7 @@ class  UserController {
    //valid exist email
    const emailExist = await User.findOne({ email : req.body.email })
    if(emailExist){
-       return res.status(404).send("email is already exist")
+       return res.status(404).json({"error":"email is already exist"})
    }
 
    const saltRounds = 10;
@@ -32,7 +32,7 @@ class  UserController {
     });
     try{
         const saveduser =   await user.save();
-        res.send(saveduser);
+        res.json(saveduser);
     }catch(err){
         res.status(400).send(err);
     }
@@ -42,23 +42,23 @@ class  UserController {
    //log-in controller 
    async login(req, res){
     const {error} = loginValidation(req.body);
+    
     if(error){
-        return res.status(400).send(error.details[0].message);
+        console.log(error.details[0].message)
+        return res.status(400).send({"error" : error.details[0].message });
     }
 
     const user = await User.findOne({ email : req.body.email })
+            
     if(!user){
-        return res.status(404).send("email doesn't exist")
+        return res.status(404).send({"error": "email doesn't exist"})
     }
     const validate = await bcrypt.compare(req.body.password , user.password);
-    if(!validate) return res.status(400).send('invalid password');
+    if(!validate) return res.status(404).json({"error": "invalid password"});
     
    //create token 
    const token = jwt.sign({_id: user._id} , "anhvudeptraivcl");
-
-   
-    res.header('auth-token',token).send(token);
-    
+   res.header('auth-token',token).json({token:token});
 };
   
   //editupdate
@@ -66,7 +66,7 @@ class  UserController {
         const id = req.user._id;
     const {error} = registerValidation(req.body);
     if(error){
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).json({"error" : error.details[0].message });
     }
     const saltRounds = 10;
     const hash = bcrypt.hashSync(req.body.password, saltRounds);
@@ -75,7 +75,7 @@ class  UserController {
    
      try{
          await User.updateOne({id}, req.body);
-        res.send("oke");
+        res.json({"status":"successed"});
     }catch(err){
         res.status(400).send(err);
     };
@@ -105,15 +105,15 @@ class  UserController {
                 return res.send(err);
             }
     
-    
             // Display uploaded image for user validation
-             User.findByIdAndUpdate(id, { image: `http://localhost:3000/${req.file.filename}` })
+             User.findByIdAndUpdate(id, { image: `http://localhost:3001/${req.file.filename}` })
              .then(()=>{
-                 res.send("ok")
+                 res.json({ image: `http://localhost:3001/${req.file.filename}` })
              })
              .catch((err)=>{return err})
         });
       }
+
 
 
       async delete(req,res){
@@ -125,7 +125,12 @@ class  UserController {
            res.status(400).send(err);
        };
       }
-    async  comment(req, res, next){
+
+
+
+
+
+    comment(req, res, next){
         var name 
         var image
         const userid = req.user._id;
@@ -139,38 +144,42 @@ class  UserController {
                 comment:req.body.comment
                }
     
-            const videoid = req.body.videoid;
-          Course.findByIdAndUpdate(videoid ,{"$push": {"comment": comment }})
-            .then(()=>{
-              res.send("commented")
-            })
+            const _id = req.body.id;
+          Course.findByIdAndUpdate(_id ,{"$push": {"comment": comment }})
+            .then(()=>{  res.json( "commented")})
             .catch(next)
         })  
          .catch(next)
         
       } 
 
-    async deletecmt(req , res, next){
+   deletecmt(req , res, next){
         var userid = req.user._id;
        
         User.findById(userid)
          .then((user)=> {
-           const ten = user.name
-    
-            
+            const ten = user.name;
             const comment = req.body.comment;
-            const videoid = req.body.videoid;
-          Course.findByIdAndUpdate(videoid ,{"$pull": {"comment": {"name": ten, "comment": comment}}})
+            const id = req.body.id;
+          Course.findByIdAndUpdate(id ,{"$pull": {"comment": {"comment": comment}}})
             .then(()=>{
-              res.send("deleted-cmt")
+              res.json("deleted-cmt")
             })
             .catch(next)
         })  
          .catch(next)
 
 
+
+
         }
 
-
+ 
+    getUserbyToken (req, res, next){
+        const id = req.user._id;
+        User.findById(id)
+        .then((user)=>res.send(user))
+        .catch(next)
+     }
 }
 module.exports = new  UserController();
